@@ -4,8 +4,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { allBooks, allReaders } from 'app/data';
 import { Reader } from "app/models/reader";
 import { Book } from "app/models/book";
+import { OldBook } from "app/models/oldBook";
 import { BookTrackerError } from 'app/models/bookTrackerError';
 import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable()
 export class DataService {
@@ -38,5 +40,16 @@ export class DataService {
         Authrozation: 'my-token'
       })
     });
+  }
+
+  getOldBookById(id: number): Observable<OldBook> {
+    return this.http.get<Book>(`/api/books/${id}`)
+      .pipe(
+        map((book: Book) => <OldBook>{
+          bookTitle: book.title,
+          year: book.publicationYear
+        }),
+        tap(b => { console.log(b); })
+      )
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { Book } from 'app/models/book';
+import { OldBook } from 'app/models/oldBook';
 import { DataService } from 'app/core/data.service';
 
 @Component({
@@ -22,6 +23,9 @@ export class EditBookComponent implements OnInit {
       (data: Book) => { this.selectedBook = data },
       (error: any) => { console.log(error) }
     );
+    this.dataService.getOldBookById(bookID).subscribe(
+      (data: OldBook) => console.log(`Old book title: ${data.bookTitle}`)
+    )
   }
 
   setMostPopular(): void {
