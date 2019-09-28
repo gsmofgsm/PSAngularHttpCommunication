@@ -3,6 +3,7 @@ import {HttpClientTestingModule, HttpTestingController, TestRequest} from '@angu
 
 import { DataService } from "./data.service";
 import { Book } from '../models/book';
+import { BookTrackerError } from 'app/models/bookTrackerError';
 
 describe('DataService', () => {
     let dataService: DataService;
@@ -36,4 +37,23 @@ describe('DataService', () => {
 
         httpTestingController.verify();
     });
+
+    it('should return a BookTrackerError', () => {
+        dataService.getAllBooks().subscribe(
+            (data: Book[]) => fail('This should have been a error'),
+            (error: BookTrackerError) => {
+                expect(error.errorNumber).toBe(100);
+                expect(error.friendlyMessage).toBe('An error occured retrieving data');
+            }
+        );
+
+        const booksRequest: TestRequest = httpTestingController.expectOne('/api/books');
+
+        booksRequest.flush('error', {
+            status: 500,
+            statusText: 'Server Error'
+        });
+
+        httpTestingController.verify();
+    })
 })
